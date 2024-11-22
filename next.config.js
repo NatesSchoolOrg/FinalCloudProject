@@ -1,7 +1,7 @@
 
 
-const nextConfig = {
+//const nextConfig = {
   /* config options here */
-};
+//};
 
-export default nextConfig;
+//export default nextConfig;

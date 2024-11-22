@@ -1,8 +1,11 @@
 'use client';
 import React, {useState} from 'react';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, Alert } from 'antd';
 import { connectToDatabase } from '@/database-config';
+import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+
 
 
 export interface LoginFormValues {
@@ -11,9 +14,11 @@ export interface LoginFormValues {
     password: string;
 }
 
+
 export const LoginForm: React.FC = () => {
     const [loading, setLoading] = useState(false); // To handle loading state
-    const [data, setData] = useState(null); // To handle response data
+    const [login_failed, setLoginValue] = useState(false);
+    const router = useRouter();
 
     const onFinish = async (values: LoginFormValues): Promise<void> => {
         console.log('Received values:', values);
@@ -22,28 +27,31 @@ export const LoginForm: React.FC = () => {
 
         try {
             // Send a POST request to the /api/login endpoint
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/runquery', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(
                     {
-                        username: values.username,
-                        password: values.password,
+                        query:`SELECT * FROM dbo.login WHERE username = '${values.username}' and password = '${values.password}'`
                     }),
             });
 
             if (response.ok) {
-                setData(await response.json());
+                const data = await response.json();
+                if (data && data.length > 0){
+                    setLoginValue(false);
+                    notification.success({
+                        message: 'Login Successful',
+                        description: `Welcome, ${values.username}!`,
+                    });
+                    router.push('/data-pulls');
+                }
+                else if (data && data.length === 0) {
+                    setLoginValue(true);
+                }
             }
-
-            notification.success({
-                message: 'Login Successful',
-                description: `Welcome, ${values.username}!`,
-            });
-
-            console.log('Login response:', data);
 
         } catch (error) {
             console.error('Login error:', error);
@@ -106,6 +114,14 @@ export const LoginForm: React.FC = () => {
                 </Button>
             </Form.Item>
             </Form>
+            {login_failed ? 
+           <Alert
+           message="Login Error"
+           description="Username or Password did not match our records."
+           type="error"
+           closable
+         />:null 
+        }
         </div>
     );
 };
