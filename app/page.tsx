@@ -5,7 +5,7 @@ import LoginForm from "./Login/Login";
 
 export default function Home() {
   return (
-    //connectToDatabase("SELECT * FROM dbo.login");
+    //connectToDatabase("SELECT * FROM dbo.login")
     <LoginForm></LoginForm>
   );
 }

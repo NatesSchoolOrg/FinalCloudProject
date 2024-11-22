@@ -1,6 +1,9 @@
 'use client';
-import React from 'react';
+import React, {useState} from 'react';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { Form, Input, Button, notification } from 'antd';
+import { connectToDatabase } from '@/database-config';
+import axios from 'axios';
 
 
 export interface LoginFormValues {
@@ -10,16 +13,39 @@ export interface LoginFormValues {
 }
 
 export const LoginForm: React.FC = () => {
-    // Handle form submission
-    const onFinish = (values: LoginFormValues): void => {
+    const [loading, setLoading] = useState(false); // To handle loading state
+
+    const onFinish = async (values: LoginFormValues): Promise<void> => {
         console.log('Received values:', values);
-        notification.success({
-            message: 'Login Successful',
-            description: `Welcome, ${values.username}!`,
-        });
+        
+        setLoading(true); // Start loading state
+
+        try {
+            // Send a POST request to the /api/login endpoint
+            const response = await axios.post('/api/login', {
+                username: values.username,
+                password: values.password,
+            });
+
+            // If the login is successful, show success notification
+            notification.success({
+                message: 'Login Successful',
+                description: `Welcome, ${values.username}!`,
+            });
+
+            console.log('Login response:', response.data);
+
+        } catch (error) {
+            console.error('Login error:', error);
+            notification.error({
+                message: 'Login Failed',
+                description: 'Invalid username or password.',
+            });
+        } finally {
+            setLoading(false); // End loading state
+        }
     };
 
-    // Handle form submission failure
     const onFinishFailed = (errorInfo: any): void => {
         console.log('Failed:', errorInfo);
     };

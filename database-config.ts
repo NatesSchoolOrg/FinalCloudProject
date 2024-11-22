@@ -22,10 +22,10 @@ export async function connectToDatabase(query:string) {
 
         // Example query
         const result = await pool.request().query(query);
-        console.log(result.recordset);
 
         // Close the connection
         await sql.close();
+        return result;
     } catch (err) {
         console.error('Database connection error:', err);
     }
