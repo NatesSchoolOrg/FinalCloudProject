@@ -3,7 +3,6 @@ import React, {useState} from 'react';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Form, Input, Button, notification } from 'antd';
 import { connectToDatabase } from '@/database-config';
-import axios from 'axios';
 
 
 export interface LoginFormValues {
@@ -14,6 +13,7 @@ export interface LoginFormValues {
 
 export const LoginForm: React.FC = () => {
     const [loading, setLoading] = useState(false); // To handle loading state
+    const [data, setData] = useState(null); // To handle response data
 
     const onFinish = async (values: LoginFormValues): Promise<void> => {
         console.log('Received values:', values);
@@ -22,18 +22,28 @@ export const LoginForm: React.FC = () => {
 
         try {
             // Send a POST request to the /api/login endpoint
-            const response = await axios.post('/api/login', {
-                username: values.username,
-                password: values.password,
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        username: values.username,
+                        password: values.password,
+                    }),
             });
 
-            // If the login is successful, show success notification
+            if (response.ok) {
+                setData(await response.json());
+            }
+
             notification.success({
                 message: 'Login Successful',
                 description: `Welcome, ${values.username}!`,
             });
 
-            console.log('Login response:', response.data);
+            console.log('Login response:', data);
 
         } catch (error) {
             console.error('Login error:', error);
