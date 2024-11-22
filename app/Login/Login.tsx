@@ -1,5 +1,5 @@
 "use client"
-import { runquery } from '../database'
+import { runquery } from '../pages/api/runquery'
 import React from 'react'
 import { Input, Space } from 'antd';
 
