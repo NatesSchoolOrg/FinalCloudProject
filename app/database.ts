@@ -12,14 +12,12 @@ const config: sql.config = {
     }
 };
 
-export let connection: sql.ConnectionPool;
+let connection: sql.ConnectionPool;
 try {
     connection = await sql.connect(config);
 } catch (err) {
     console.error(`Failed to connect to the database: ${err}`)
 }
-
-
 
 export async function runquery(query: string): Promise<sql.IResult<any> | void>{
     try {
