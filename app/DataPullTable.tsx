@@ -1,43 +1,49 @@
-'use client'
-import React from 'react';
-import { runquery } from './database'
+"use client"
+import React, { MouseEventHandler } from 'react';
 import { IRecordSet, IResult } from 'mssql';
 import { DataUtilities } from './utilities/data-utilities';
 import { Table, Input, Button, Flex, Form, FormProps } from 'antd';
 import { DataPull, Household, datapullsColumns } from './types/data-interfaces';
 
-const [datapull, updateDataPull] = React.useState<DataPull[]>([]);
-const [householdNum, updateHouseholdNum] = React.useState<string>('');
-
-const query: string = `
-    SELECT Top 15 *
-    FROM
-        dbo.transactions as t
-    INNER JOIN 
-        dbo.households as h ON t.HSHD_NUM = h.HSHD_NUM
-    WHERE
-        h.HSHD_NUM = "4851";
-`
-
-// const onSubmit = async (): Promise<void> => {
-//     const result: IRecordSet<any> = (await runquery(query) as IResult<any>).recordset;
-//     // const result: IRecordSet<any> = (await connection
-//     //     .request()
-//     //     .input('hshdNum', householdNum)
-//     //     .query(query) as IResult<any>).recordset;
-//     updateDataPull(DataUtilities.mapDataPull(result));
-// }
-
 export default function DataPullTable() {
+    const [householdNum, updateHouseholdNum] = React.useState<string>('');
+    const [data, updateData] = React.useState<DataPull[]>([]);
+    const fetchData = async (householdeNum: string) => {
+        const query: string = `
+        SELECT Top 15 *
+        FROM
+            dbo.transactions t
+        INNER JOIN 
+            dbo.households h ON t.HSHD_NUM = h.HSHD_NUM
+        WHERE
+            h.HSHD_NUM = ${householdNum};
+`
+        const response = await fetch('/api/runquery', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            updateData(DataUtilities.mapDataPull(data));
+            console.log(data);
+        } else {
+            console.error('Failed to fetch data');
+        }
+ }
+
     return (
         <div>
-            {/* <Flex vertical gap="middle">
-                <Input placeholder="Enter Household Number"/>
-                <Button type="primary" onClick={onSubmit}>
+            <Flex vertical gap="middle">
+                <Input placeholder="Enter Household Number" onChange={(event) => updateHouseholdNum(event.target.value)}/>
+                <Button type="primary" onClick={() => fetchData(householdNum)}>
                     Submit
                 </Button>
-                <Table dataSource={datapull} columns={datapullsColumns} />
-            </Flex> */}
+                <Table dataSource={data} columns={datapullsColumns} />
+            </Flex>
             HI
         </div>
         
