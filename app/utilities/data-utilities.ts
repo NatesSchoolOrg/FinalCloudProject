@@ -153,8 +153,8 @@ export class DataUtilities {
             return {
                 key: index,
                 HSHD_NUM: item['HSHD_NUM'],
-                BASKET_NUM: item['BASKET_NUM'],
-                DATE: item['DATE'],
+                BASKET_NUM: parseInt(item['BASKET_NUM']),
+                DATE: item['PURCHASE_DATE'],
                 PRODUCT_NUM: item['PRODUCT_NUM'],
                 DEPARTMENT: this.parseDepartment(item['DEPARTMENT']),
                 COMMODITY: item['COMMODITY'],

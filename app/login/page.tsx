@@ -1,12 +1,9 @@
-'use client';
-import React, {useState} from 'react';
-import { NextApiRequest, NextApiResponse } from 'next';
+"use client";
+import React from "react";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
 import { Form, Input, Button, notification, Alert } from 'antd';
-import { connectToDatabase } from '@/database-config';
-import { redirect } from 'next/navigation';
-import { useRouter } from 'next/navigation';
-
-
 
 export interface LoginFormValues {
     username: string;
@@ -14,10 +11,10 @@ export interface LoginFormValues {
     password: string;
 }
 
-
-export const LoginForm: React.FC = () => {
+export default function Login() {
     const [loading, setLoading] = useState(false); // To handle loading state
-    const [login_failed, setLoginValue] = useState(false);
+    const [loginFailed, setLoginFailed] = useState(false);
+    const { login } = useAuth();
     const router = useRouter();
 
     const onFinish = async (values: LoginFormValues): Promise<void> => {
@@ -41,15 +38,16 @@ export const LoginForm: React.FC = () => {
             if (response.ok) {
                 const data = await response.json();
                 if (data && data.length > 0){
-                    setLoginValue(false);
+                    setLoginFailed(false);
                     notification.success({
                         message: 'Login Successful',
                         description: `Welcome, ${values.username}!`,
                     });
+                    login();
                     router.push('/data-pulls');
                 }
                 else if (data && data.length === 0) {
-                    setLoginValue(true);
+                    setLoginFailed(true);
                 }
             }
 
@@ -114,7 +112,7 @@ export const LoginForm: React.FC = () => {
                 </Button>
             </Form.Item>
             </Form>
-            {login_failed ? 
+            {loginFailed ? 
            <Alert
            message="Login Error"
            description="Username or Password did not match our records."
@@ -124,6 +122,4 @@ export const LoginForm: React.FC = () => {
         }
         </div>
     );
-};
-
-export default LoginForm;
+}

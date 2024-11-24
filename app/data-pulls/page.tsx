@@ -1,12 +1,10 @@
+"use client"
 import React from 'react'
-import { IRecordSet, IResult } from 'mssql';
-import { DataUtilities } from '../utilities/data-utilities';
-import { title } from 'process';
-import { Table } from 'antd';
-import { DataPull, Household, datapullsColumns } from '../types/data-interfaces';
 import DataPullTable from '../DataPullTable';
+import { useProtectedRoute } from '../../hooks/useProtectedRoute';
 
 export default function DataPulls() {
+    useProtectedRoute();
     return (
         <DataPullTable />
     )
