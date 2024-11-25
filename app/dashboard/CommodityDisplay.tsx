@@ -1,6 +1,6 @@
 "use client"
 import { Commodity } from "./types/commodity.interface";
-import { Card, Typography, Col, Row} from "antd";
+import { Card, Typography, Col, Row, Alert, Flex, Spin} from "antd";
 import { Chart as ChartJS, ArcElement, CategoryScale, Title, Tooltip, Legend} from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import {useState} from 'react'
@@ -9,7 +9,8 @@ const { Link } = Typography;
 ChartJS.register(ArcElement, CategoryScale, Title, Tooltip, Legend);
 
 interface Props {
-    commodities: Commodity[];
+    bestCommodities: Commodity[];
+    worstCommodities: Commodity[];
     onCommoditySelect: (commodity: Commodity) => void;
 }
 
@@ -46,29 +47,45 @@ const CommodityDisplay = (props: Props) => {
             <Row gutter={[16, 16]} style={{ display: 'flex'}}>
                 <Col span={6}>
                     <Card title="Top 10 Most Sold Commodities">
-                        {props.commodities.map((commodity, index) => (
-                            <div key={index}>
-                                <p>
-                                    <Link onClick={() =>handleClick(commodity)}>
-                                        Name: {commodity.name}, Number: {commodity.amount}
-                                    </Link>
-                                </p>
-                            </div>
-                        ))}
+                        {props.bestCommodities.length === 0 ? (
+                            <Spin tip="Loading" size="large" />
+                        ) : (
+                            props.bestCommodities.map((commodity, index) => {
+                                if (props.bestCommodities.length != 0) {
+                                    return (
+                                        <div key={index}>
+                                            <p>
+                                                <Link onClick={() => handleClick(commodity)}>
+                                                    Name: {commodity.name}, Number: {commodity.amount}
+                                                </Link>
+                                            </p>
+                                        </div>
+                                    );
+                                }
+                            })
+                        )}
                     </Card>
                 </Col>
                 <Col span={6}>
                     <Card title="Top 10 Least Sold Commodities">
-                        {props.commodities.map((commodity, index) => (
-                            <div key={index}>
-                                <p>
-                                    <Link onClick={() => handleClick(commodity)}>
-                                        Name: {commodity.name}, Number: {commodity.amount}
-                                    </Link>
-                                </p>
-                            </div>
-                        ))}
-                    </Card>
+                    {props.worstCommodities.length === 0 ? (
+                        <Spin tip="Loading" size="large" />
+                    ) : (
+                        props.worstCommodities.map((commodity, index) => {
+                            if (props.worstCommodities.length != 0) {
+                                return (
+                                    <div key={index}>
+                                        <p>
+                                            <Link onClick={() => handleClick(commodity)}>
+                                                Name: {commodity.name}, Number: {commodity.amount}
+                                            </Link>
+                                        </p>
+                                    </div>
+                                );
+                            }
+                        })
+                    )}
+                </Card>
                 </Col>
                 <Col span={6}>
                     <Card title="Age Ranges for Selected Commodity">

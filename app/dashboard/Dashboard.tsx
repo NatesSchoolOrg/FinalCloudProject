@@ -98,7 +98,7 @@ export default function Dashboard() {
                 startDate: "12/18",
                 endDate: "01/01"
             },)}>Run</Button>
-            <CommodityDisplay commodities={bestCommodities} onCommoditySelect={(commodity:Commodity)=>{console.log(commodity)}}></CommodityDisplay>
+            <CommodityDisplay bestCommodities={bestCommodities} worstCommodities={worstCommodities} onCommoditySelect={(commodity:Commodity)=>{console.log(commodity)}}></CommodityDisplay>
         </div>
     )
 }
