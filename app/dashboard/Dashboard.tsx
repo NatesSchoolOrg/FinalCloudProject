@@ -12,7 +12,7 @@ export default function Dashboard() {
     const [bestCommodities, setBestCommodities] = useState<Commodity[]>([]);
     const [worstCommodities, setWorstCommodities] = useState<Commodity[]>([]);
 
-    const formatDate = (date: string) => {
+    const formatDate = (date: string): string => {
         let dateArray = date.split('/');
         return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]}`;
     }
@@ -27,7 +27,7 @@ export default function Dashboard() {
             JOIN
                 products p ON t.PRODUCT_NUM = p.PRODUCT_NUM
             WHERE
-                CAST(t.PURCHASE_DATE AS DATE) BETWEEN '2019-01-01' AND '2019-12-31'
+                CAST(t.PURCHASE_DATE AS DATE) BETWEEN @startdate AND @enddate
             GROUP BY p.COMMODITY
             ORDER BY COUNT(*) DESC 
         `;
@@ -40,15 +40,17 @@ export default function Dashboard() {
             JOIN
                 products p ON t.PRODUCT_NUM = p.PRODUCT_NUM
             WHERE
-                CAST(t.PURCHASE_DATE AS DATE) BETWEEN '2019-01-01' AND '2019-12-31'
+                CAST(t.PURCHASE_DATE AS DATE) BETWEEN @startdate AND @enddate
             GROUP BY p.COMMODITY
             ORDER BY COUNT(*) ASC
         `;
         
         const params = {
-            startDate: formatDate(holiday?.startDate + '/' + year),
-            endDate: formatDate(holiday?.endDate + '/' + year),
+            startdate: formatDate(selectedHoliday?.startDate + '/' + year),
+            enddate: formatDate(selectedHoliday?.endDate + '/' + year),
         }
+
+        console.log(params);
 
         const responseBest = await fetch('/api/runquery', {
             method: 'POST',
@@ -96,7 +98,7 @@ export default function Dashboard() {
             <Button onClick={() => fetchCommodityData({
                 holiday: "Christmas",
                 startDate: "12/18",
-                endDate: "01/01"
+                endDate: "12/31"
             },)}>Run</Button>
             <CommodityDisplay commodities={bestCommodities} onCommoditySelect={(commodity:Commodity)=>{console.log(commodity)}}></CommodityDisplay>
         </div>
