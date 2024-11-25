@@ -3,10 +3,9 @@ import { Commodity } from "../types/data-interfaces";
 import { Card, Typography, Col, Row, Alert, Flex, Spin, Empty} from "antd";
 import { Chart as ChartJS, ArcElement, CategoryScale, Title, Tooltip, Legend, ChartData} from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import {use, useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import { AgeRange, IncomeRange } from "../types/data-interfaces";
 import CommodityButton from "./CommodityButton";
-import { set } from "@ant-design/plots/es/core/utils";
 
 const { Link } = Typography;
 ChartJS.register(ArcElement, CategoryScale, Title, Tooltip, Legend);
