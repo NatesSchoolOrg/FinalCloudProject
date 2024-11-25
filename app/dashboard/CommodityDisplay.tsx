@@ -18,6 +18,17 @@ interface Props {
     onCommoditySelect: (commodity: Commodity) => void;
 }
 
+const pieChartColors = [
+    '#003f5c',
+    '#2f4b7c',
+    '#665191',
+    '#a05195',
+    '#d45087',
+    '#f95d6a',
+    '#ff7c43',
+    '#ffa600',
+]
+
 const CommodityDisplay = (props: Props) => {
     let [ageRangeData, setAgeRangeData] = useState<ChartData<"pie", number[], unknown>>({datasets: []});
     let [incomeRangeData, setIncomeRangeData] = useState<ChartData<"pie", number[], unknown>>({datasets: []});
@@ -30,7 +41,7 @@ const CommodityDisplay = (props: Props) => {
             datasets: [
                 {
                 data: props.ageRanges.map((ageRange) => ageRange.amount),
-                backgroundColor: ['#FF0000', '#FFA500', '#FFFF00', '#008000', '#0000FF'],
+                backgroundColor: pieChartColors,
                 hoverOffset: 2,
                 }
             ]
@@ -40,7 +51,7 @@ const CommodityDisplay = (props: Props) => {
             datasets: [
                 {
                 data: props.incomeRanges.map((incomeRange) => incomeRange.amount),
-                backgroundColor: ['#FF0000', '#FFA500', '#FFFF00', '#008000', '#0000FF'],
+                backgroundColor: pieChartColors,
                 hoverOffset: 2,
                 }
             ]
