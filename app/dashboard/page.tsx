@@ -1,15 +1,15 @@
 "use client";
 import { useProtectedRoute } from "../../hooks/useProtectedRoute";
+import Dashboard from "./Dashboard";
 import HolidaySelector from "./HolidaySelector";
-
-const Dashboard = () => {
-    //useProtectedRoute();
+const DashboardPage = () => {
+    // useProtectedRoute();
     return (
         <div>
-            <h1>Dashboard</h1>
             <HolidaySelector holidays={[]} onHolidaySelect={(holiday) => console.log(holiday)} />
+            <Dashboard></Dashboard>
         </div>
     );
 };
 
-export default Dashboard;
+export default DashboardPage;

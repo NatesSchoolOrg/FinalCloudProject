@@ -1,6 +1,6 @@
 "use client"
 import type { Metadata } from "next";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useRouter } from 'next/navigation';
 import { Layout, Menu, MenuProps, Spin, theme } from "antd";
 import localFont from "next/font/local";
@@ -9,8 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
 import NavigationMenu from "./NavigationMenu";
 
-const { Header, Content, Footer } = Layout;
-type MenuItem = Required<MenuProps>['items'][number];
+const { Content, Footer } = Layout;
 
 
 const geistSans = localFont({
@@ -24,17 +23,11 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  title: "Cloud Final Project",
-  description: "Final project for Cloud Computing",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [pageLoading, setPageLoading] = useState(false);
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -57,13 +50,7 @@ export default function RootLayout({
                     overflow: 'auto',
                   }}
                 >
-                  {pageLoading ? (
-                        <div style={{ textAlign: "center", marginTop: 100 }}>
-                          <Spin size="large" />
-                        </div>
-                      ) : (
-                        children
-                      )}
+                  {children}
                 </div>
               
             </Content>

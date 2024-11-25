@@ -17,8 +17,6 @@ export default function Login() {
     const router = useRouter();
 
     const onFinish = async (values: LoginFormValues): Promise<void> => {
-        console.log('Received values:', values);
-        
 
         try {
             const response = await fetch('/api/runquery', {
@@ -62,7 +60,7 @@ export default function Login() {
     };
 
     const onFinishFailed = (errorInfo: any): void => {
-        console.log('Failed:', errorInfo);
+        console.error('Failed:', errorInfo);
     };
 
     return (

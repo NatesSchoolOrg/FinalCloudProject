@@ -3,11 +3,22 @@
 import { Flex, Button, Card, message } from "antd";
 import { useState } from "react";
 const gridStyle = (holidayName: string, selectedHolidayName: string): React.CSSProperties => {
+    const isSelected = holidayName === selectedHolidayName;
     return {
-        width: "25%",
+        width: "22%",
         textAlign: "center",
-        height: 400,
-        backgroundColor: holidayName === selectedHolidayName ? "#d3dbf5" : "white",
+        height: 200,
+        cursor: "pointer",
+        borderRadius: "10px",
+        fontSize: "30px",
+        fontWeight: "bold",
+        color: isSelected ? "white" : "black",
+        backgroundColor: isSelected ? "#d3dbf5" : "white",
+        margin: "10px",
+        transition: "all 0.3s ease",
+        boxShadow: isSelected ? "0 4px 10px rgba(0, 0, 0, 0.2)" : "0 2px 6px rgba(0, 0, 0, 0.1)",
+        alignItems: "center",
+        justifyContent: "center",
     };
 };
 const holidayData = [
@@ -92,7 +103,15 @@ const HolidaySelector = (props: Props) => {
     return (
         <div>
             {contextHolder}
-            <Card title="Holiday Selector">
+            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>Holiday Selector</h2>
+            <Card
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "10px",
+                    padding: "20px",
+                }}
+            >
                 {holidayData.map((holiday, index) => (
                     <Card.Grid
                         key={index}
@@ -106,15 +125,11 @@ const HolidaySelector = (props: Props) => {
             <div
                 style={{
                     marginTop: "30px",
-                    textAlign: "center",
-                    width: "300px",
+                    display: "flex",
+                    justifyContent: "center",
                 }}
             >
-                <Button
-                    type="primary"
-                    onClick={handleButtonClick}
-                    style={{ width: "500px", display: "flex", justifyContent: "center", alignItems: "center" }}
-                >
+                <Button type="primary" onClick={handleButtonClick} style={{ width: "800px" }}>
                     Go To DashBoard
                 </Button>
             </div>

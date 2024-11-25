@@ -40,6 +40,22 @@ export const DepartmentEnum = {
 } as const;
 export type Department = keyof typeof DepartmentEnum;
 
+export interface Commodity {
+  name: string;
+  amount: number;
+};
+
+export interface AgeRange {
+  range: string;
+  amount: number;
+}
+
+export interface IncomeRange {
+  range: string;
+  amount: number;
+}
+
+
 export interface Household {
     key: number,
     HSHD_NUM: string,
@@ -217,10 +233,12 @@ export const datapullsColumns: TableProps<DataPull>['columns'] = [
           let color = 'geekblue';
           if (value === DepartmentEnum.Food) {
             color = 'green';
+          } else if (!value) {
+            color = 'black';
           }
           return (
             <Tag color={color} key={value}>
-              {value.toUpperCase()}
+              {value ? value.toUpperCase() : 'N/A'}
             </Tag>
           );
         },
