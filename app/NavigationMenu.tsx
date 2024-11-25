@@ -1,21 +1,22 @@
+"use client"
 import type { Metadata } from "next";
-import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, use } from "react";
+import { useRouter, usePathname } from 'next/navigation';
 import { Layout, Menu, MenuProps, Spin, theme } from "antd";
-import localFont from "next/font/local";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
 import { useAuth } from "@/context/AuthContext";
+import { UserOutlined } from "@ant-design/icons";
 
 const { Header, Content, Footer } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 
 const NavigationMenu = () => {
     const [pageLoading, setPageLoading] = useState(false);
-    const [current, setCurrent] = useState('login');
-    const { isLoggedIn, logout } = useAuth();
+    const { isLoggedIn, logout, getUsername } = useAuth();
     const router = useRouter();
 
+    
+    const pathname = (usePathname() as string).replace("/", "");
     const navigationItems: MenuItem[] = isLoggedIn ? [
         {
             key: "",
@@ -27,17 +28,10 @@ const NavigationMenu = () => {
         },
         {
             key: "user-menu",
-          label: (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <span style={{ marginRight: 8 }}>👤</span> {/* User Icon */}
-              <span>Username</span> {/* Replace with actual username */}
-            </div>
-          ),
+            icon: <UserOutlined />,
+            label: (getUsername()),
+         
           children: [
-            {
-              key: "profile",
-              label: "Profile",
-            },
             {
               key: "logout",
               label: "Log Out",
@@ -68,15 +62,15 @@ const NavigationMenu = () => {
     } else {
         handleNavigation(`/${e.key}`);
     }
-    setCurrent(e.key);
     };
+
     return (
         <Header style={{ display: 'flex', alignItems: 'center', position: "sticky", top: 0,
             zIndex: 1, width: "100%"}}>
             <Menu
             theme="dark"
             mode="horizontal"
-            selectedKeys={[current]}
+            selectedKeys={[pathname]}
             items={navigationItems}
             style={{ flex: 1, minWidth: 0}}
             onClick={onClick}

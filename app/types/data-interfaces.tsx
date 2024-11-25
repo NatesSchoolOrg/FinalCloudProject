@@ -15,7 +15,7 @@ export const YesNoFlagEnum = {
 export type YesNoFlag = keyof typeof YesNoFlagEnum;
 
 export const StoreRegionEnum = {
-    North: 'North',
+    // North: 'North', no north region in data
     South: 'South',
     East: 'East',
     West: 'West'
@@ -261,7 +261,7 @@ export const datapullsColumns: TableProps<DataPull>['columns'] = [
         dataIndex: 'STORE_REGION',
         key: 'STORE_REGION',
         render: (value: StoreRegion | undefined) => {
-          let color = value === StoreRegionEnum.North ? 'blue' : value === StoreRegionEnum.South ? 'green' : value === StoreRegionEnum.East ? 'orange' : value === StoreRegionEnum.West ? 'red' : 'black';
+          let color = value === StoreRegionEnum.South ? 'green' : value === StoreRegionEnum.East ? 'orange' : value === StoreRegionEnum.West ? 'red' : 'black';
           return (
             <Tag color={color} key={value}>
               {value || 'N/A'}

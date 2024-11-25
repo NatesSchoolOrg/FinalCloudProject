@@ -12,7 +12,6 @@ export interface LoginFormValues {
 }
 
 export default function Login() {
-    const [loading, setLoading] = useState(false); // To handle loading state
     const [loginFailed, setLoginFailed] = useState(false);
     const { login } = useAuth();
     const router = useRouter();
@@ -20,10 +19,8 @@ export default function Login() {
     const onFinish = async (values: LoginFormValues): Promise<void> => {
         console.log('Received values:', values);
         
-        setLoading(true); // Start loading state
 
         try {
-            // Send a POST request to the /api/login endpoint
             const response = await fetch('/api/runquery', {
                 method: 'POST',
                 headers: {
@@ -31,7 +28,11 @@ export default function Login() {
                 },
                 body: JSON.stringify(
                     {
-                        query:`SELECT * FROM dbo.login WHERE username = '${values.username}' and password = '${values.password}'`
+                        query:`SELECT * FROM dbo.login WHERE username = @username and password = @password`,
+                        params: {
+                            username: values.username,
+                            password: values.password,
+                        }
                     }),
             });
 
@@ -43,7 +44,7 @@ export default function Login() {
                         message: 'Login Successful',
                         description: `Welcome, ${values.username}!`,
                     });
-                    login();
+                    login(values.username);
                     router.push('/data-pulls');
                 }
                 else if (data && data.length === 0) {
@@ -57,8 +58,6 @@ export default function Login() {
                 message: 'Login Failed',
                 description: 'Invalid username or password.',
             });
-        } finally {
-            setLoading(false); // End loading state
         }
     };
 

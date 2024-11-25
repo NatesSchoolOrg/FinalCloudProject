@@ -4,8 +4,10 @@ import Cookies from "js-cookie";
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  login: () => void;
+  login: (username: string) => void;
   logout: () => void;
+  getUsername: () => string | undefined;
+  changeUser: (username: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -13,9 +15,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const login = () => {
+  const login = (username: string) => {
     setIsLoggedIn(true);
     Cookies.set("loggedIn", "true", { expires: 7 });
+    Cookies.set("username", username, { expires: 7 });
   };
   
   const logout = () => {
@@ -23,8 +26,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     Cookies.remove("loggedIn");
   };
 
+  const getUsername = () => {
+    return Cookies.get("username");
+  };
+
+  const changeUser = (username: string) => {
+    Cookies.set("username", username, { expires: 7 });
+  }
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout, getUsername, changeUser }}>
       {children}
     </AuthContext.Provider>
   );

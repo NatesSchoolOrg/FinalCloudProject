@@ -47,7 +47,6 @@ export default function RootLayout({
           <Layout style={{height: "100%"}}>
             <NavigationMenu />
             <Content style={{ padding: '0 48px' }}>
-              
                 <div
                   style={{
                     background: colorBgContainer,
@@ -55,6 +54,7 @@ export default function RootLayout({
                     padding: 24,
                     borderRadius: borderRadiusLG,
                     height: '100%',
+                    overflow: 'auto',
                   }}
                 >
                   {pageLoading ? (
@@ -68,7 +68,7 @@ export default function RootLayout({
               
             </Content>
             <Footer style={{ textAlign: 'center' }}>
-              Cloud Final Project ©2021 Created by Nate Louder, Madi Coulson, & Jimmy German
+              Cloud Final Project Fall 2024 | Created by Nate Louder, Madi Coulson, & Jimmy German
             </Footer>
           </Layout>
         </AuthProvider>
