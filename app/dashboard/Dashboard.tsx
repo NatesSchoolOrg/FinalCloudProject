@@ -5,6 +5,8 @@ import { IRecordSet, IResult } from 'mssql';
 import { DataUtilities } from '../utilities/data-utilities';
 import { Table, InputNumber, Button, Flex, Form, FormProps, InputNumberProps, message, Select } from 'antd';
 import { DataPull, Household, StoreRegion, StoreRegionEnum, datapullsColumns } from '../types/data-interfaces';
+import CommodityDisplay from './CommodityDisplay';
+import { Commodity } from "./types/commodity.interface";
 
 export default function Dashboard() {
     const [holiday, setHoliday] = React.useState<Holiday | undefined>(undefined);
@@ -40,8 +42,9 @@ export default function Dashboard() {
     }
 
     
-    
+    const commodityTestList:Commodity[] = [{name: "Food", amount:12}, {name: "Food", amount:12}]
     return (
-        <HolidaySelector onHolidaySelected={fetchData} />
+        //<HolidaySelector onHolidaySelected={fetchData} />
+        <CommodityDisplay commodities={commodityTestList} onCommoditySelect={(commodity:Commodity)=>{console.log(commodity)}}></CommodityDisplay>
     )
 }

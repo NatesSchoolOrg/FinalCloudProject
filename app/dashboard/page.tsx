@@ -1,14 +1,15 @@
 "use client"
 import { useProtectedRoute } from '../../hooks/useProtectedRoute';
-
-const Dashboard = () => {
-    useProtectedRoute();
+import Dashboard from './Dashboard'
+const DashboardPage = () => {
+    //useProtectedRoute();
     return (
         <div>
             <h1>Dashboard</h1>
+            <Dashboard></Dashboard>
             
         </div>
     )
 }
 
-export default Dashboard
+export default DashboardPage
