@@ -1,5 +1,5 @@
 import { parse } from "path";
-import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity } from "../types/data-interfaces";
+import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity, AgeRange, IncomeRange } from "../types/data-interfaces";
 
 export class DataUtilities {
     private static removeWhiteSpace = (string: string | string[]): string | undefined => {
@@ -181,6 +181,24 @@ export class DataUtilities {
                 name: item['COMMODITY'],
                 amount: item['COUNT']
             } as Commodity
+        })
+    }
+
+    static mapAgeRangeData = (data: any[]): AgeRange[] => {
+        return this.cleanUpData(data).map((item, index) => {
+            return {
+                range: item['AGE_RANGE'],
+                amount: item['COUNT']
+            }
+        })
+    }
+
+    static mapIncomeRangeData = (data: any[]): IncomeRange[] => {
+        return this.cleanUpData(data).map((item, index) => {
+            return {
+                range: item['INCOME_RANGE'],
+                amount: item['COUNT']
+            }
         })
     }
 

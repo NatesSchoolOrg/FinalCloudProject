@@ -1,9 +1,10 @@
 "use client"
-import { Commodity } from "./types/commodity.interface";
-import { Card, Typography, Col, Row, Alert, Flex, Spin} from "antd";
-import { Chart as ChartJS, ArcElement, CategoryScale, Title, Tooltip, Legend} from 'chart.js';
+import { Commodity } from "../types/data-interfaces";
+import { Card, Typography, Col, Row, Alert, Flex, Spin, Empty} from "antd";
+import { Chart as ChartJS, ArcElement, CategoryScale, Title, Tooltip, Legend, ChartData} from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import {useState} from 'react'
+import {use, useEffect, useState} from 'react'
+import { AgeRange, IncomeRange } from "../types/data-interfaces";
 
 const { Link } = Typography;
 ChartJS.register(ArcElement, CategoryScale, Title, Tooltip, Legend);
@@ -11,37 +12,60 @@ ChartJS.register(ArcElement, CategoryScale, Title, Tooltip, Legend);
 interface Props {
     bestCommodities: Commodity[];
     worstCommodities: Commodity[];
+    ageRanges: AgeRange[];
+    incomeRanges: IncomeRange[];
     onCommoditySelect: (commodity: Commodity) => void;
 }
 
-const data = {
-    //labels: [This will hold the different age ranges],
-    datasets: [
-      {
-        label: 'Dataset 1',
-        data: [10, 20, 30, 40, 50], // This will hold the percentage values
-        backgroundColor: ['#FF0000', '#FFA500', '#FFFF00', '#008000', '#0000FF'], // These colors can change
-        hoverOffset: 2,
-      }
-    ]
-  };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-    }
-  };
-
-
 const CommodityDisplay = (props: Props) => {
-    const [isVisible, setIsVisible] = useState(false);
+    let [ageRangeData, setAgeRangeData] = useState<ChartData<"pie", number[], unknown>>({datasets: []});
+    let [incomeRangeData, setIncomeRangeData] = useState<ChartData<"pie", number[], unknown>>({datasets: []});
+
+    useEffect(() => {
+        setAgeRangeData({
+            labels: props.ageRanges.map((ageRange) => ageRange.range === undefined ? 'Unknown' : ageRange.range),
+            datasets: [
+                {
+                data: props.ageRanges.map((ageRange) => ageRange.amount),
+                backgroundColor: ['#FF0000', '#FFA500', '#FFFF00', '#008000', '#0000FF'],
+                hoverOffset: 2,
+                }
+            ]
+        });
+        setIncomeRangeData({
+            labels: props.incomeRanges.map((incomeRange) => incomeRange.range === undefined ? 'Unknown' : incomeRange.range),
+            datasets: [
+                {
+                data: props.incomeRanges.map((incomeRange) => incomeRange.amount),
+                backgroundColor: ['#FF0000', '#FFA500', '#FFFF00', '#008000', '#0000FF'],
+                hoverOffset: 2,
+                }
+            ]
+        });
+    }, [props.ageRanges, props.incomeRanges]);
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+            },
+        }
+    };
+
     const handleClick = (commodity: any) => {
         props.onCommoditySelect(commodity);
-        setIsVisible(!isVisible);
-      };
+    };
+
+    const emptyStateTemplate = (
+        <Empty
+            description={
+            <Typography.Text>
+                Select a commodity to view age and income ranges.
+            </Typography.Text>
+            }
+        />
+    )
+
     return (
         <div>
             <Row gutter={[16, 16]} style={{ display: 'flex'}}>
@@ -89,12 +113,12 @@ const CommodityDisplay = (props: Props) => {
                 </Col>
                 <Col span={6}>
                     <Card title="Age Ranges for Selected Commodity">
-                        {isVisible && <Pie data={data} options={options} />}
+                        { props.ageRanges.length === 0 ?  emptyStateTemplate : <Pie data={ageRangeData} options={options} />}
                     </Card>
                 </Col>
                 <Col span={6}>
                     <Card title="Income Ranges for Selected Commodity">
-                        {isVisible && <Pie data={data} options={options} />}
+                        {props.incomeRanges.length === 0 ?  emptyStateTemplate : <Pie data={incomeRangeData} options={options} />}
                     </Card>
                 </Col>
             </Row>

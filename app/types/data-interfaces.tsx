@@ -40,6 +40,22 @@ export const DepartmentEnum = {
 } as const;
 export type Department = keyof typeof DepartmentEnum;
 
+export interface Commodity {
+  name: string;
+  amount: number;
+};
+
+export interface AgeRange {
+  range: string;
+  amount: number;
+}
+
+export interface IncomeRange {
+  range: string;
+  amount: number;
+}
+
+
 export interface Household {
     key: number,
     HSHD_NUM: string,
@@ -97,11 +113,6 @@ export interface DataPull {
     HH_SIZE: string | undefined,
     CHILDREN: string | undefined,
 }
-
-export interface Commodity {
-  name: string;
-  amount: number;
-};
 
 export const householdColumns = [
     {
