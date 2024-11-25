@@ -92,11 +92,13 @@ export default function Dashboard() {
     
     
     return (
-        <Button onClick={() => fetchCommodityData({
-            holiday: "Christmas",
-            startDate: "12/18",
-            endDate: "01/01"
-        },)}>Run</Button>
-        <CommodityDisplay commodities={commodityTestList} onCommoditySelect={(commodity:Commodity)=>{console.log(commodity)}}></CommodityDisplay>
+        <div>
+            <Button onClick={() => fetchCommodityData({
+                holiday: "Christmas",
+                startDate: "12/18",
+                endDate: "01/01"
+            },)}>Run</Button>
+            <CommodityDisplay commodities={bestCommodities} onCommoditySelect={(commodity:Commodity)=>{console.log(commodity)}}></CommodityDisplay>
+        </div>
     )
 }
