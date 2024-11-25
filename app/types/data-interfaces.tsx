@@ -217,10 +217,12 @@ export const datapullsColumns: TableProps<DataPull>['columns'] = [
           let color = 'geekblue';
           if (value === DepartmentEnum.Food) {
             color = 'green';
+          } else if (!value) {
+            color = 'black';
           }
           return (
             <Tag color={color} key={value}>
-              {value.toUpperCase()}
+              {value ? value.toUpperCase() : 'N/A'}
             </Tag>
           );
         },
