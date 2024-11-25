@@ -27,6 +27,10 @@ const NavigationMenu = () => {
             label: 'Data Pulls',
         },
         {
+            key: "dashboard",
+            label: 'Dashboard'
+        },
+        {
             key: "user-menu",
             icon: <UserOutlined />,
             label: (getUsername()),
