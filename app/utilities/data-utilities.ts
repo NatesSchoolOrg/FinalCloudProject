@@ -1,5 +1,5 @@
 import { parse } from "path";
-import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity, AgeRange, IncomeRange } from "../types/data-interfaces";
+import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity, AgeRange, IncomeRange, WeeklyCommodityAmounts } from "../types/data-interfaces";
 
 export class DataUtilities {
     private static removeWhiteSpace = (string: string | string[]): string | undefined => {
@@ -202,4 +202,13 @@ export class DataUtilities {
         })
     }
 
+    static mapWeeklySalesData = (data: any[]): WeeklyCommodityAmounts[] => {
+        return this.cleanUpData(data).map((item, index) => {
+            return {
+                week: item['WEEK_NUM'],
+                year: item['YEAR'],
+                amount: item['COUNT']
+            }
+        })
+    };
 }

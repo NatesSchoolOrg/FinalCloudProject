@@ -55,6 +55,12 @@ export interface IncomeRange {
   amount: number;
 }
 
+export interface WeeklyCommodityAmounts {
+  week: number;
+  year: number;
+  amount: number;
+}
+
 
 export interface Household {
     key: number,

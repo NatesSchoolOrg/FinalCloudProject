@@ -2,6 +2,7 @@
 
 import { Flex, Button, Card, message } from "antd";
 import { useState } from "react";
+import { allHolidayData } from "../types/holidays";
 const gridStyle = (holidayName: string, selectedHolidayName: string): React.CSSProperties => {
     const isSelected = holidayName === selectedHolidayName;
     return {
@@ -21,48 +22,6 @@ const gridStyle = (holidayName: string, selectedHolidayName: string): React.CSSP
         justifyContent: "center",
     };
 };
-const holidayData = [
-    {
-        holiday: "Christmas",
-        startDate: "12/18",
-        endDate: "01/01",
-    },
-    {
-        holiday: "New Year",
-        startDate: "12/25",
-        endDate: "01/01",
-    },
-    {
-        holiday: "Thanksgiving",
-        startDate: "11/21",
-        endDate: "12/05",
-    },
-    {
-        holiday: "Halloween",
-        startDate: "10/24",
-        endDate: "11/07",
-    },
-    {
-        holiday: "St. Patricks Day",
-        startDate: "03/10",
-        endDate: "03/24",
-    },
-    {
-        holiday: "Easter",
-        startDate: "04/01",
-        endDate: "04/14",
-    },
-    {
-        holiday: "Fourth of July",
-        startDate: "06/27",
-        endDate: "07/04",
-    },
-    {
-        holiday: "Valentine Day",
-        startDate: "02/07",
-        endDate: "02/21",
-    },
-];
 
 interface Props {
     holidays: Holiday[];
@@ -112,7 +71,7 @@ const HolidaySelector = (props: Props) => {
                     padding: "20px",
                 }}
             >
-                {holidayData.map((holiday, index) => (
+                {props.holidays.map((holiday, index) => (
                     <Card.Grid
                         key={index}
                         style={gridStyle(holiday.holiday, selectedHoliday?.holiday as string)}

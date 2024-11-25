@@ -6,6 +6,7 @@ import { Pie } from 'react-chartjs-2';
 import { useEffect, useState } from 'react'
 import { AgeRange, IncomeRange } from "../types/data-interfaces";
 import CommodityButton from "./CommodityButton";
+import YearlySalesChart from "./YearlySalesChart";
 
 const { Link } = Typography;
 ChartJS.register(ArcElement, CategoryScale, Title, Tooltip, Legend);
@@ -28,6 +29,14 @@ const pieChartColors = [
     '#ff7c43',
     '#ffa600',
 ]
+
+const options = {
+    responsive: true,
+    plugins: {
+        legend: {
+        },
+    }
+};
 
 const CommodityDisplay = (props: Props) => {
     let [ageRangeData, setAgeRangeData] = useState<ChartData<"pie", number[], unknown>>({datasets: []});
@@ -59,14 +68,6 @@ const CommodityDisplay = (props: Props) => {
         setLoadingCharts(false);
     }, [props.ageRanges, props.incomeRanges]);
 
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-            },
-        }
-    };
-
     const handleClick = (commodity: any) => {
         setLoadingCharts(true);
         setSelectedCommodity(commodity);
@@ -85,70 +86,81 @@ const CommodityDisplay = (props: Props) => {
 
     return (
         <div>
-            <Row gutter={[16, 16]} style={{ display: 'flex'}}>
-                <Col span={6}>
-                    <Card title="5 Most Sold Commodities">
-                        {props.bestCommodities.length === 0 ? (
-                            <Spin tip="Loading" size="large" />
-                        ) : (
-                            props.bestCommodities.map((commodity, index) => {
-                                return (
-                                    <div key={index}>
-                                        <p>
-                                            <CommodityButton 
-                                                commodity={commodity} 
-                                                onClick={() => handleClick(commodity)}
-                                                active={selectedCommodity?.name === commodity.name}
-                                            />
-                                        </p>
-                                    </div>
-                                );
-                            })
-                        )}
-                    </Card>
-                </Col>
-                <Col span={6}>
-                    <Card
-                        title="5 Least Sold Commodities"
-                    >
-                    {props.worstCommodities.length === 0 ? (
-                        <Spin tip="Loading" size="large" />
-                    ) : (
-                        props.worstCommodities.sort((a, b) => b.amount - a.amount).map((commodity, index) => {
-                            return (
-                                <div key={index}>
-                                    <p>
-                                        <CommodityButton 
-                                            commodity={commodity} 
-                                            onClick={() => handleClick(commodity)}
-                                            active={selectedCommodity?.name === commodity.name}
-                                        />      
-                                    </p>
-                                </div>
-                            );
-                        })
-                    )}
-                </Card>
-                </Col>
-                <Col span={6}>
-                    <Card title={`Age Ranges for ${selectedCommodity?.name}`}>
-                        { loadingCharts ? <Spin tip="Loading" size="large" /> :
-                            props.ageRanges.length === 0 ?  
-                                emptyStateTemplate : 
-                                <Pie data={ageRangeData} options={options} />
-                        }
-                    </Card>
-                </Col>
-                <Col span={6}>
-                    <Card title={`Income Ranges for ${selectedCommodity?.name}`}>
-                        { loadingCharts ? <Spin tip="Loading" size="large" /> :
-                            props.incomeRanges.length === 0 ?  
-                                emptyStateTemplate : 
-                                <Pie data={incomeRangeData} options={options} />
-                        }
-                    </Card>
-                </Col>
-            </Row>
+            <Flex vertical gap="large">
+                <div
+                    style={{
+                        minHeight: "400px",
+                        borderBottom: "2px solid #f0f0f0",
+                        paddingBottom: "20px",
+                    }}
+                >
+                    <Row gutter={[16, 16]} style={{ display: 'flex'}}>
+                        <Col span={6}>
+                            <Card title="5 Most Sold Commodities">
+                                {props.bestCommodities.length === 0 ? (
+                                    <Spin tip="Loading" size="large" />
+                                ) : (
+                                    props.bestCommodities.map((commodity, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <p>
+                                                    <CommodityButton
+                                                        commodity={commodity}
+                                                        onClick={() => handleClick(commodity)}
+                                                        active={selectedCommodity?.name === commodity.name}
+                                                    />
+                                                </p>
+                                            </div>
+                                        );
+                                    })
+                                )}
+                            </Card>
+                        </Col>
+                        <Col span={6}>
+                            <Card
+                                title="5 Least Sold Commodities"
+                            >
+                            {props.worstCommodities.length === 0 ? (
+                                <Spin tip="Loading" size="large" />
+                            ) : (
+                                props.worstCommodities.sort((a, b) => b.amount - a.amount).map((commodity, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <p>
+                                                <CommodityButton
+                                                    commodity={commodity}
+                                                    onClick={() => handleClick(commodity)}
+                                                    active={selectedCommodity?.name === commodity.name}
+                                                />
+                                            </p>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </Card>
+                        </Col>
+                        <Col span={6}>
+                            <Card title={`Age Ranges for ${selectedCommodity?.name}`}>
+                                { loadingCharts ? <Spin tip="Loading" size="large" /> :
+                                    props.ageRanges.length === 0 ?
+                                        emptyStateTemplate :
+                                        <Pie data={ageRangeData} options={options} />
+                                }
+                            </Card>
+                        </Col>
+                        <Col span={6}>
+                            <Card title={`Income Ranges for ${selectedCommodity?.name}`}>
+                                { loadingCharts ? <Spin tip="Loading" size="large" /> :
+                                    props.incomeRanges.length === 0 ?
+                                        emptyStateTemplate :
+                                        <Pie data={incomeRangeData} options={options} />
+                                }
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
+                <YearlySalesChart commodity={selectedCommodity}></YearlySalesChart>
+            </Flex>          
         </div>
     )
 }

@@ -1,5 +1,5 @@
 "use client"
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { Holiday } from '../types/holidays';
 import { IRecordSet, IResult } from 'mssql';
 import { DataUtilities } from '../utilities/data-utilities';
@@ -7,16 +7,25 @@ import { Table, InputNumber, Button, Flex, Form, FormProps, InputNumberProps, me
 import { AgeRange, Commodity, Household, IncomeRange, StoreRegion, StoreRegionEnum, datapullsColumns } from '../types/data-interfaces';
 import CommodityDisplay from './CommodityDisplay';
 
+interface Props {
+    selectedHoliday: Holiday;
+    onClearSelection: () => void;
+}
 
 
-export default function Dashboard() {
+export default function Dashboard(props: Props) {
     const [holiday, setHoliday] = React.useState<Holiday | undefined>(undefined);
-    const [year, setYear] = React.useState<string>("2019");
     const [bestCommodities, setBestCommodities] = useState<Commodity[]>([]);
     const [worstCommodities, setWorstCommodities] = useState<Commodity[]>([]);
     const [selectedCommodity, setSelectedCommodity] = useState<Commodity | undefined>(undefined);
     const [ageRanges, setAgeRanges] = useState<AgeRange[]>([]);
     const [incomeRanges, setIncomeRanges] = useState<IncomeRange[]>([]);
+
+    useEffect(() => {
+        if(props.selectedHoliday) {
+            fetchCommodityData(props.selectedHoliday);
+        }
+    }, [props.selectedHoliday]);
 
     const formatDate = (date: string): string => {
         let dateArray = date.split('/');
@@ -48,8 +57,8 @@ export default function Dashboard() {
         `;
         
         const params = {
-            startdate: formatDate(selectedHoliday?.startDate + '/' + year),
-            enddate: formatDate(selectedHoliday?.endDate + '/' + year),
+            startdate: formatDate(selectedHoliday?.startDate),
+            enddate: formatDate(selectedHoliday?.endDate),
         }
 
         const responseBest = await fetch('/api/runquery', {
@@ -118,8 +127,8 @@ export default function Dashboard() {
         `;
 
         const params = {
-            startdate: formatDate(holiday?.startDate + '/' + year),
-            enddate: formatDate(holiday?.endDate + '/' + year),
+            startdate: formatDate(holiday?.startDate as string),
+            enddate: formatDate(holiday?.endDate as string),
             commodity: commodity.name,
         }
 
@@ -170,9 +179,10 @@ export default function Dashboard() {
     
     return (
         <Flex vertical gap="large">
+            <Button onClick={props.onClearSelection}>Select Other Holiday</Button>
             <Flex vertical gap="middle">
                 <h1>
-                    Dashboard | {holiday?.holiday} {year} {selectedCommodity ? `| ${selectedCommodity.name}` : ''}
+                    Dashboard | {holiday?.holiday} {selectedCommodity ? `| ${selectedCommodity.name}` : ''}
                 </h1>
                 <CommodityDisplay
                     bestCommodities={bestCommodities}
@@ -182,11 +192,6 @@ export default function Dashboard() {
                     onCommoditySelect={handleCommoditySelect}>
                 </CommodityDisplay>
             </Flex>
-            <Button onClick={() => fetchCommodityData({
-                holiday: "Christmas",
-                startDate: "12/18",
-                endDate: "12/31"
-            },)}>Run</Button>
         </Flex>
     )
 }
