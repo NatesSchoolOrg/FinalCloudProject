@@ -98,6 +98,11 @@ export interface DataPull {
     CHILDREN: string | undefined,
 }
 
+export interface Commodity {
+  name: string;
+  amount: number;
+};
+
 export const householdColumns = [
     {
         title: 'Household Number',

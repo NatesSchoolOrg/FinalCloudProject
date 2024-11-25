@@ -1,5 +1,5 @@
 import { parse } from "path";
-import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull } from "../types/data-interfaces";
+import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity } from "../types/data-interfaces";
 
 export class DataUtilities {
     private static removeWhiteSpace = (string: string | string[]): string | undefined => {
@@ -13,7 +13,7 @@ export class DataUtilities {
     private static cleanUpData = (data: any[]): any[] => {
         return data.map((item) => {
             for (let key in item) {
-                item[key] = DataUtilities.removeWhiteSpace(item[key]);
+                item[key] = typeof item[key] !== 'number' ? DataUtilities.removeWhiteSpace(item[key]) : item[key];
             }
             return item;
         })
@@ -32,8 +32,8 @@ export class DataUtilities {
 
     private static parseStoreRegion = (storeRegion: string): StoreRegion | undefined => {
         switch (storeRegion) {
-            case 'NORTH':
-                return StoreRegionEnum.North;
+            // case 'NORTH':
+            //     return StoreRegionEnum.North;
             case 'SOUTH':
                 return StoreRegionEnum.South;
             case 'EAST':
@@ -172,6 +172,15 @@ export class DataUtilities {
                 HH_SIZE: item['HH_SIZE'],
                 CHILDREN: item['CHILDREN'],
             }
+        })
+    }
+
+    static mapCommodityData = (data: any[]): Commodity[] => {
+        return this.cleanUpData(data).map((item, index) => {
+            return {
+                name: item['COMMODITY'],
+                amount: item['COUNT']
+            } as Commodity
         })
     }
 
