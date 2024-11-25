@@ -8,6 +8,7 @@ import { AgeRange, Commodity, Household, IncomeRange, StoreRegion, StoreRegionEn
 import CommodityDisplay from './CommodityDisplay';
 
 
+
 export default function Dashboard() {
     const [holiday, setHoliday] = React.useState<Holiday | undefined>(undefined);
     const [year, setYear] = React.useState<string>("2019");
@@ -25,10 +26,8 @@ export default function Dashboard() {
     const fetchCommodityData = async (selectedHoliday: Holiday) => {
         setHoliday(selectedHoliday);
         let queryBestCommodity: string = `
-            SELECT TOP(10) p.COMMODITY, COUNT(*) as COUNT
+            SELECT TOP(5) p.COMMODITY, COUNT(*) as COUNT
             FROM transactions t
-            JOIN 
-                households h ON t.HSHD_NUM = h.HSHD_NUM
             JOIN
                 products p ON t.PRODUCT_NUM = p.PRODUCT_NUM
             WHERE
@@ -38,10 +37,8 @@ export default function Dashboard() {
         `;
 
         let queryWorstCommodity: string = `
-            SELECT TOP(10) p.COMMODITY, COUNT(*) as COUNT
+            SELECT TOP(5) p.COMMODITY, COUNT(*) as COUNT
             FROM transactions t
-            JOIN 
-                households h ON t.HSHD_NUM = h.HSHD_NUM
             JOIN
                 products p ON t.PRODUCT_NUM = p.PRODUCT_NUM
             WHERE
@@ -54,8 +51,6 @@ export default function Dashboard() {
             startdate: formatDate(selectedHoliday?.startDate + '/' + year),
             enddate: formatDate(selectedHoliday?.endDate + '/' + year),
         }
-
-        console.log(params);
 
         const responseBest = await fetch('/api/runquery', {
             method: 'POST',
@@ -174,19 +169,24 @@ export default function Dashboard() {
         
     
     return (
-        <div>
+        <Flex vertical gap="large">
+            <Flex vertical gap="middle">
+                <h1>
+                    Dashboard | {holiday?.holiday} {year} {selectedCommodity ? `| ${selectedCommodity.name}` : ''}
+                </h1>
+                <CommodityDisplay
+                    bestCommodities={bestCommodities}
+                    worstCommodities={worstCommodities}
+                    incomeRanges={incomeRanges}
+                    ageRanges={ageRanges}
+                    onCommoditySelect={handleCommoditySelect}>
+                </CommodityDisplay>
+            </Flex>
             <Button onClick={() => fetchCommodityData({
                 holiday: "Christmas",
                 startDate: "12/18",
                 endDate: "12/31"
             },)}>Run</Button>
-            <CommodityDisplay 
-                bestCommodities={bestCommodities} 
-                worstCommodities={worstCommodities} 
-                incomeRanges={incomeRanges} 
-                ageRanges={ageRanges} 
-                onCommoditySelect={handleCommoditySelect}>
-            </CommodityDisplay>
-        </div>
+        </Flex>
     )
 }
