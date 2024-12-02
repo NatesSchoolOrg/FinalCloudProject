@@ -1,11 +1,100 @@
+"use client";
 import Image from "next/image";
 import styles from "./page.module.css";
 import { connectToDatabase } from "@/database-config";
-import { Button } from "antd";
-
-
+import { Button, Card, message } from "antd";
+import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
+import DashBoardPhoto from "@/public/DashboardPhoto.jpg";
+const cardStyle: React.CSSProperties = {
+    width: "600px",
+    height: "500px",
+    textAlign: "center",
+    fontSize: "28px",
+    fontWeight: "bold",
+    borderRadius: "10px",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+};
 export default function Home() {
-  return (
-    <Button type="primary">Login</Button>
-  )
+    const router = useRouter();
+
+    const { login } = useAuth();
+
+    const [cardOneHovered, setCardOneHovered] = useState<boolean>(false);
+    const [cardTwoHovered, setCardTwoHovered] = useState<boolean>(false);
+    const handleClick = (route: string) => {
+        router.push(route);
+    };
+
+    const handleMouseEnter = (cardNumber: number) => {
+        cardNumber === 1 ? setCardOneHovered(true) : setCardTwoHovered(true);
+    };
+
+    const handleMouseLeave = (cardNumber: number) => {
+        cardNumber === 1 ? setCardOneHovered(false) : setCardTwoHovered(false);
+    };
+
+    return (
+        <div id="HomePage" style={{ padding: "20px" }}>
+            <div style={{ marginBottom: "30px" }}>
+                <h1 style={{ fontSize: "54px", fontWeight: "bold", textAlign: "center" }}>Cloud Computing Project 2024</h1>
+            </div>
+
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "20px",
+                }}
+            >
+                <Card
+                    hoverable
+                    onMouseEnter={() => handleMouseEnter(1)}
+                    onMouseLeave={() => handleMouseLeave(1)}
+                    onClick={() => handleClick("/dashboard")}
+                    style={{ ...cardStyle, backgroundColor: cardOneHovered ? "#d3dbf5" : "white" }}
+                    cover={
+                        <img
+                            alt="example"
+                            src="https://upload.wikimedia.org/wikipedia/commons/0/0a/Hand%2C_bar_and_pie_chart%2C_light.png"
+                            style={{
+                                height: "350px", // Adjust height as needed
+                                width: "90%", // Make it span the card's width
+                                objectFit: "cover", // Ensures the image covers the container
+                                borderRadius: "10px 10px 0 0", // Match the card's border-radius
+                                justifyContent: "center",
+                                margin: "auto",
+                            }}
+                        />
+                    }
+                >
+                    Dashboard
+                </Card>
+                <Card
+                    hoverable
+                    onMouseEnter={() => handleMouseEnter(2)}
+                    onMouseLeave={() => handleMouseLeave(2)}
+                    onClick={() => handleClick("/data-pulls")}
+                    style={{ ...cardStyle, backgroundColor: cardTwoHovered ? "#d3dbf5" : "white" }}
+                    cover={
+                        <img
+                            alt="example"
+                            src="https://cdn-icons-png.flaticon.com/512/1742/1742483.png"
+                            style={{
+                                height: "350px", // Adjust height as needed
+                                width: "60%", // Make it span the card's width
+                                objectFit: "cover", // Ensures the image covers the container
+                                borderRadius: "10px 10px 0 0", // Match the card's border-radius
+                                justifyContent: "center",
+                                margin: "auto",
+                            }}
+                        />
+                    }
+                >
+                    DataPull
+                </Card>
+            </div>
+        </div>
+    );
 }
