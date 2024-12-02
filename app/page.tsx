@@ -23,16 +23,29 @@ export default function Home() {
 
     const [cardOneHovered, setCardOneHovered] = useState<boolean>(false);
     const [cardTwoHovered, setCardTwoHovered] = useState<boolean>(false);
+    const [cardThreeHovered, setCardThreeHovered] = useState<boolean>(false);
     const handleClick = (route: string) => {
         router.push(route);
     };
 
     const handleMouseEnter = (cardNumber: number) => {
-        cardNumber === 1 ? setCardOneHovered(true) : setCardTwoHovered(true);
+        if (cardNumber === 1) {
+            setCardOneHovered(true);
+        } else if (cardNumber === 2) {
+            setCardTwoHovered(true);
+        } else if (cardNumber === 3) {
+            setCardThreeHovered(true);
+        }
     };
-
+    
     const handleMouseLeave = (cardNumber: number) => {
-        cardNumber === 1 ? setCardOneHovered(false) : setCardTwoHovered(false);
+        if (cardNumber === 1) {
+            setCardOneHovered(false);
+        } else if (cardNumber === 2) {
+            setCardTwoHovered(false);
+        } else if (cardNumber === 3) {
+            setCardThreeHovered(false);
+        }
     };
 
     return (
@@ -93,6 +106,29 @@ export default function Home() {
                     }
                 >
                     DataPull
+                </Card>
+                <Card
+                    hoverable
+                    onMouseEnter={() => handleMouseEnter(3)}
+                    onMouseLeave={() => handleMouseLeave(3)}
+                    onClick={() => handleClick("/predictive-models")}
+                    style={{ ...cardStyle, backgroundColor: cardThreeHovered ? "#d3dbf5" : "white" }}
+                    cover={
+                        <img
+                            alt="example"
+                            src="https://cdn-icons-png.flaticon.com/512/2103/2103652.png"
+                            style={{
+                                height: "350px", // Adjust height as needed
+                                width: "60%", // Make it span the card's width
+                                objectFit: "cover", // Ensures the image covers the container
+                                borderRadius: "10px 10px 0 0", // Match the card's border-radius
+                                justifyContent: "center",
+                                margin: "auto",
+                            }}
+                        />
+                    }
+                >
+                    Predictive Models
                 </Card>
             </div>
         </div>
