@@ -31,6 +31,10 @@ const NavigationMenu = () => {
             label: 'Dashboard'
         },
         {
+            key: "predictive-models",
+            label: 'Predictive Models'
+        },
+        {
             key: "user-menu",
             icon: <UserOutlined />,
             label: (getUsername()),

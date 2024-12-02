@@ -1,5 +1,5 @@
 import { doesNotMatch } from "assert";
-import { TableProps, Tag, Tooltip  } from "antd";
+import { Progress, TableProps, Tag, Tooltip  } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 
 export const MaritalStatusEnum = {
@@ -61,6 +61,11 @@ export interface WeeklyCommodityAmounts {
   amount: number;
 }
 
+export interface Churn {
+  key: number,
+  HSHD_NUM: string,
+  PREDICTED_CHURN: number,
+}
 
 export interface Household {
     key: number,
@@ -166,6 +171,28 @@ export const householdColumns = [
         dataIndex: 'CHILDREN',
         key: 'CHILDREN',
       }
+];
+
+export const churnColumns: TableProps<Churn>['columns'] = [
+    {
+      title: 'Household Number',
+      dataIndex: 'HSHD_NUM',
+      key: 'HSHD_NUM',
+    },
+    {
+      title: 'Predicted Churn',
+      dataIndex: 'PREDICTED_CHURN',
+      key: 'PREDICTED_CHURN',
+      render: (value: number) => {
+        return (
+          <Progress 
+            percent={value} 
+            strokeColor={value < 25 ? 'green' : value > 75 ? 'red' : 'blue'}
+            status="normal"
+            />
+        )
+      }
+    },
 ];
 
 export const datapullsColumns: TableProps<DataPull>['columns'] = [

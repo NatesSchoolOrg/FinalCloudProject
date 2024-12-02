@@ -14,12 +14,13 @@ const gridStyle = (holidayName: string, selectedHolidayName: string): React.CSSP
         fontSize: "30px",
         fontWeight: "bold",
         color: isSelected ? "white" : "black",
-        backgroundColor: isSelected ? "#d3dbf5" : "white",
+        backgroundColor: isSelected ? "#1677FF" : "white",
         margin: "10px",
         transition: "all 0.3s ease",
         boxShadow: isSelected ? "0 4px 10px rgba(0, 0, 0, 0.2)" : "0 2px 6px rgba(0, 0, 0, 0.1)",
         alignItems: "center",
         justifyContent: "center",
+        userSelect: "none",
     };
 };
 

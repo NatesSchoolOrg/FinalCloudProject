@@ -36,7 +36,7 @@ export const allHolidayData: Holiday[] = [
         {
             holiday: "Fourth of July",
             startDate: "06/27/2020",
-            endDate: "07/04/2020"
+            endDate: "07/11/2020"
         },
         {
             holiday: "Valentine Day",

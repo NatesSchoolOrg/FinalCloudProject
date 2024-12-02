@@ -10,7 +10,10 @@ ChartJS.register(ArcElement, PointElement, LineElement, Title, Tooltip, LinearSc
 
 interface Props {
     commodity: Commodity | undefined;
+    holidayWeek: number; 
+    holidayYear: number; 
 }
+
 
 const YearlySalesChart = (props: Props) => {
     const [weeklySales, setWeeklySales] = useState<WeeklyCommodityAmounts[]>([]);
@@ -44,7 +47,9 @@ const YearlySalesChart = (props: Props) => {
             }]
         });
     }, [weeklySales]);
-
+    const highLightBackground = {
+        
+    }
     const fetchYearlySales = async () => {
         let query: string = `
             SELECT t.WEEK_NUM, t.[YEAR], COUNT(*) as COUNT
@@ -79,14 +84,15 @@ const YearlySalesChart = (props: Props) => {
             console.error('Failed to fetch yearly sales data');
         }
     }
-
-
-    return ( weeklySales.length !== 0 ?
+    return weeklySales.length !== 0 ? (
         <div>
             <h1>Yearly Sales Chart</h1>
-            <Line data={chartData}></Line>
-            <Button type="primary" onClick={fetchYearlySales}>Fetch Yearly Sales</Button>
-        </div> : <div>
+            <Line
+                data={chartData}
+            />
+        </div>
+    ) : (
+        <div>
             <Empty
                 description={
                     <Typography.Text>
@@ -96,6 +102,5 @@ const YearlySalesChart = (props: Props) => {
             />
         </div>
     );
-}
-
+};
 export default YearlySalesChart;

@@ -1,5 +1,5 @@
 import { parse } from "path";
-import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity, AgeRange, IncomeRange, WeeklyCommodityAmounts } from "../types/data-interfaces";
+import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity, AgeRange, IncomeRange, WeeklyCommodityAmounts, Churn } from "../types/data-interfaces";
 
 export class DataUtilities {
     private static removeWhiteSpace = (string: string | string[]): string | undefined => {
@@ -211,4 +211,14 @@ export class DataUtilities {
             }
         })
     };
+
+    static mapChurnData = (data: any[]): Churn[] => {
+        return this.cleanUpData(data).map((item, index) => {
+            return {
+                key: index,
+                HSHD_NUM: item['HSHD_NUM'],
+                PREDICTED_CHURN: parseFloat(item['PREDICTED_CHURN']) * 100,
+            }
+        })
+    }
 }
