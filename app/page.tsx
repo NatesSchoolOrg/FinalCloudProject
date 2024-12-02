@@ -19,8 +19,6 @@ const cardStyle: React.CSSProperties = {
 export default function Home() {
     const router = useRouter();
 
-    const { login } = useAuth();
-
     const [cardOneHovered, setCardOneHovered] = useState<boolean>(false);
     const [cardTwoHovered, setCardTwoHovered] = useState<boolean>(false);
     const [cardThreeHovered, setCardThreeHovered] = useState<boolean>(false);
@@ -66,7 +64,7 @@ export default function Home() {
                     onMouseEnter={() => handleMouseEnter(1)}
                     onMouseLeave={() => handleMouseLeave(1)}
                     onClick={() => handleClick("/dashboard")}
-                    style={{ ...cardStyle, backgroundColor: cardOneHovered ? "#d3dbf5" : "white" }}
+                    style={{ ...cardStyle, backgroundColor: cardOneHovered ? "#f4f4f4" : "white" }}
                     cover={
                         <img
                             alt="example"
@@ -89,7 +87,7 @@ export default function Home() {
                     onMouseEnter={() => handleMouseEnter(2)}
                     onMouseLeave={() => handleMouseLeave(2)}
                     onClick={() => handleClick("/data-pulls")}
-                    style={{ ...cardStyle, backgroundColor: cardTwoHovered ? "#d3dbf5" : "white" }}
+                    style={{ ...cardStyle, backgroundColor: cardTwoHovered ? "#f4f4f4" : "white" }}
                     cover={
                         <img
                             alt="example"
@@ -112,7 +110,7 @@ export default function Home() {
                     onMouseEnter={() => handleMouseEnter(3)}
                     onMouseLeave={() => handleMouseLeave(3)}
                     onClick={() => handleClick("/predictive-models")}
-                    style={{ ...cardStyle, backgroundColor: cardThreeHovered ? "#d3dbf5" : "white" }}
+                    style={{ ...cardStyle, backgroundColor: cardThreeHovered ? "#f4f4f4" : "white" }}
                     cover={
                         <img
                             alt="example"

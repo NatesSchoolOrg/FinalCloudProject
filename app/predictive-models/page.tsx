@@ -1,11 +1,13 @@
 "use client"
+import Image from "next/image";
 import React, { MouseEventHandler, useState, useRef, useEffect} from 'react';
 import { DataUtilities } from '../utilities/data-utilities';
 import { Bar } from 'react-chartjs-2';
 import { Button, List, Select, Table, Typography } from 'antd';
 import { Chart as ChartJS, ArcElement, Title, Tooltip, LinearScale, PointElement, LineElement, ChartData, BarElement, ChartOptions, CategoryScale} from 'chart.js';
 import { Churn, churnColumns, BasketFrequency } from '../types/data-interfaces';
-import { set } from '@ant-design/plots/es/core/utils';
+import githubpng from '$public/github.png';
+import { useProtectedRoute } from "@/hooks/useProtectedRoute";
 
 ChartJS.register(ArcElement, PointElement, BarElement, CategoryScale, Title, Tooltip, LinearScale);
 
@@ -38,6 +40,8 @@ const chartOptions: ChartOptions<"bar"> = {
 };
 
 const PredictiveModelsPage = () => {
+    useProtectedRoute();
+
     const [loading, updateLoading] = useState<boolean>(false);
     const [churnData, setChurnData] = useState<Churn[]>([]);
     const [frequencyData, setFrequencyData] = useState<BasketFrequency[]>([]);
@@ -46,10 +50,8 @@ const PredictiveModelsPage = () => {
     const [selectedProductNumber, setSelectedProductNumber] = useState<number | undefined>(undefined);
     const [selectedProductFrequentItems, setSelectedProductFrequentItems] = useState<Record<number, number>>([]);
 
-    const chartRef = useRef<HTMLCanvasElement>(null);
-
-
     const fetchData = async () => {
+        
         updateLoading(true);
         let query: string = `
             SELECT * FROM 
@@ -189,7 +191,19 @@ const PredictiveModelsPage = () => {
                     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
                 }}
             >
-                <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: "#001529" }}>Basket Analysis</h2>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'start',
+                        alignItems: 'center',
+                        gap: '8px',
+                    }}
+                >
+                    <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: "#001529" }}>Basket Analysis</h2>
+                    <a href="https://github.com/madicoulson/finalCloudProject/blob/main/models/main.py" target='_blank'>
+                        <Image src={'/github.png'} width={24} height={24} alt="GitHub" />
+                    </a>
+                </div>
                 <div
                     style={{
                         display: 'flex',
@@ -226,7 +240,19 @@ const PredictiveModelsPage = () => {
                 }}
             >
             
-                <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: '#001529' }}>Churn Prediction</h2>
+            <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'start',
+                        alignItems: 'center',
+                        gap: '8px',
+                    }}
+                >
+                    <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: "#001529" }}>Churn Prediction</h2>
+                    <a href="https://github.com/madicoulson/finalCloudProject/blob/main/models/churn-prediction.py" target='_blank'>
+                        <Image src={'/github.png'} width={24} height={24} alt="GitHub" />
+                    </a>
+                </div>
                 <div
                     style={{
                         display: 'flex',
