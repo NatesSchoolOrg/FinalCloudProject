@@ -1,26 +1,15 @@
 "use client"
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEventHandler, useState, useRef, useEffect} from 'react';
 import { DataUtilities } from '../utilities/data-utilities';
-import { Chart as ChartJS, ArcElement, Title, Tooltip, LinearScale, PointElement, LineElement, ChartData} from 'chart.js';
+import Chart from 'chart.js/auto';
 import { Button, Table } from 'antd';
 import { Churn, churnColumns } from '../types/data-interfaces';
+
 
 const PredictiveModelsPage = () => {
     const [loading, updateLoading] = React.useState<boolean>(false);
     const [churnData, setChurnData] = React.useState<any[]>([]);
-    const [chartData, setChartData] = useState<ChartData<"bar", number[], unknown>>({datasets: []});
-
-    const config = {
-        type: 'bar',
-        data: chartData,
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        },
-    };
+    const chartRef = useRef<HTMLCanvasElement>(null);
 
     const fetchData = async () => {
         updateLoading(true);
@@ -50,9 +39,64 @@ const PredictiveModelsPage = () => {
         }
     }
 
+    useEffect(() => {
+        if (chartRef.current && churnData.length > 0) {
+            const counts: Record<number, number> = {};
+            churnData.forEach(({ PREDICTED_CHURN }) => {
+                counts[PREDICTED_CHURN] = (counts[PREDICTED_CHURN] || 0) + 1;
+            });
+
+            const labels = Object.keys(counts).map(key => parseFloat(key).toFixed(2));
+            const data = Object.values(counts);
+
+            new Chart(chartRef.current, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Count of PREDICTED_CHURN',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 1,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'PREDICTED_CHURN Distribution Bar Graph',
+                        },
+                        tooltip: {
+                            enabled: true,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'PREDICTED_CHURN',
+                            },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Count',
+                            },
+                        },
+                    },
+                },
+            });
+        }
+    }, [churnData]);
+    
+
     return (
         <div>
             <Table loading={loading} dataSource={churnData.sort((a: Churn, b: Churn) => b.PREDICTED_CHURN - a.PREDICTED_CHURN)} columns={churnColumns} scroll={{x: "80%"}} />
+            {churnData.length > 0 && <canvas ref={chartRef}></canvas>}
             <Button onClick={fetchData}>Fetch Data</Button>
         </div>
     );
