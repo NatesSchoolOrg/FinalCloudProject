@@ -54,7 +54,7 @@ const PredictiveModelsPage = () => {
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Count of PREDICTED_CHURN',
+                        label: 'Number of Households',
                         data: data,
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgb(75, 192, 192)',
@@ -66,7 +66,7 @@ const PredictiveModelsPage = () => {
                     plugins: {
                         title: {
                             display: true,
-                            text: 'PREDICTED_CHURN Distribution Bar Graph',
+                            text: 'Number of Households within the Predicted Churn Rate',
                         },
                         tooltip: {
                             enabled: true,
@@ -76,14 +76,14 @@ const PredictiveModelsPage = () => {
                         x: {
                             title: {
                                 display: true,
-                                text: 'PREDICTED_CHURN',
+                                text: 'Churn Prediction Percentage',
                             },
                         },
                         y: {
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Count',
+                                text: 'Number of Households',
                             },
                         },
                     },
