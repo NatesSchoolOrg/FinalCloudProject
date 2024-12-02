@@ -1,5 +1,5 @@
 import { parse } from "path";
-import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity, AgeRange, IncomeRange, WeeklyCommodityAmounts, Churn } from "../types/data-interfaces";
+import { Household, StoreRegion, YesNoFlag, MaritalStatus, Product, Transaction, Homeowner, BrandType, Department, DepartmentEnum, BrandTypeEnum, HomeownerEnum, MaritalStatusEnum, StoreRegionEnum, YesNoFlagEnum, DataPull, Commodity, AgeRange, IncomeRange, WeeklyCommodityAmounts, Churn, BasketFrequency } from "../types/data-interfaces";
 
 export class DataUtilities {
     private static removeWhiteSpace = (string: string | string[]): string | undefined => {
@@ -217,7 +217,19 @@ export class DataUtilities {
             return {
                 key: index,
                 HSHD_NUM: item['HSHD_NUM'],
-                PREDICTED_CHURN: parseFloat(item['PREDICTED_CHURN']) * 100,
+                PREDICTED_CHURN: Math.round(parseFloat(item['PREDICTED_CHURN']) * 100),
+            }
+        })
+    }
+
+    static mapBasketFrequencyData = (data: any[]): BasketFrequency[] => {
+        return this.cleanUpData(data).map((item, index) => {
+            console.log(item);
+            return {
+                key: index,
+                PRODUCT_NUMS: item['PRUDUCT_NUMS'].split(',').map((num: string) => parseInt(num.replace(/[\[\]\s]/g, ''), 10)),
+                COMBO_FREQUENCY: parseInt(item['COMBO_FREQUENCY']),
+                COMBO_SIZE: parseInt(item['COMBO_SIZE']),
             }
         })
     }

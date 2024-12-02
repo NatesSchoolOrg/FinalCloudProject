@@ -1,38 +1,52 @@
 from pyspark.sql import SparkSession
 from pyspark.ml.fpm import FPGrowth
+from pyspark.sql.functions import size
 import pandas as pd
-from mlxtend.frequent_patterns import apriori
-from mlxtend.frequent_patterns import association_rules
-# from sklearn.model_selection import train_test_split
-# from sklearn.model_selection import GradientBoosting
-# from sklearn.metrics import mean_squared_error, r2_score
-
 
 def load_data():
     data = pd.read_csv('models\\training-data\\400_transactions.csv')
+    data = data[['BASKET_NUM', 'PRODUCT_NUM']]
+    data['PRODUCT_NUM'] = pd.to_numeric(data['PRODUCT_NUM'], errors='coerce')
     return data
 
 def encode_data(data):
     transaction_df = pd.crosstab(data['BASKET_NUM'], data['PRODUCT_NUM'])
-    transaction_df = transaction_df.applymap(lambda x: 1 if x > 0 else 0)
+    transaction_df = transaction_df.map(lambda x: 1 if x > 0 else 0)
     return transaction_df
 
 def recommend_items(item, association_rules):
     recommendations = association_rules.filter(association_rules['antecedent'].contains(item)).select('consequent', 'confidence', 'lift').collect()
     recommendations.show()
+
+def generate_frequent_itemsets_dataset(model, output_file="models\\frequent_itemsets.csv"):
+    frequent_itemsets = model.freqItemsets
+
+    frequent_itemsets = frequent_itemsets.withColumn("size", size(frequent_itemsets["items"]))
+
+    frequent_itemsets_filtered = frequent_itemsets.filter(
+        (frequent_itemsets["size"] >= 2) & (frequent_itemsets["size"] <= 3)
+    )
+
+    frequent_itemsets_pandas = frequent_itemsets_filtered.toPandas()
+
+    frequent_itemsets_pandas.to_csv(output_file, index=False)
+    print(f"Frequent itemsets saved to {output_file}")
     
 if __name__ == '__main__':
     data = load_data()
-    data = encode_data(data)
+    transaction_df = encode_data(data)
+    item_counts = transaction_df.sum(axis=0)
+    common_items = item_counts[item_counts.between(10, 500)].index
+    filtered_data = transaction_df[common_items]
+
+    transactions = filtered_data.apply(lambda row: row[row == 1].index.tolist(), axis=1).tolist()
     spark = SparkSession.builder.appName("FrequentPatternMining").getOrCreate()
-    
-    transactions = data.apply(lambda row: row[row == 1].index.tolist(), axis=1).tolist()
-    
-    spark_df = spark.createDataFrame([(row,) for row in transactions], ["items"])
-    
-    fp_growth = FPGrowth(itemsCol="items", minSupport=0.001, minConfidence=0.01)
+    spark_df = spark.createDataFrame([(transaction,) for transaction in transactions], ["items"])
+
+    fp_growth = FPGrowth(itemsCol="items", minSupport=0.001, minConfidence=0.05)
     model = fp_growth.fit(spark_df)
-    #model.save("models\\fpgrowth_model")
+
+    generate_frequent_itemsets_dataset(model)
 
     frequent_itemsets = model.freqItemsets
     frequent_itemsets_sorted = frequent_itemsets.orderBy("freq", ascending=False)
@@ -40,4 +54,5 @@ if __name__ == '__main__':
 
     association_rules = model.associationRules
     association_rules.show()
+
     spark.stop()

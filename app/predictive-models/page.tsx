@@ -1,15 +1,53 @@
 "use client"
 import React, { MouseEventHandler, useState, useRef, useEffect} from 'react';
 import { DataUtilities } from '../utilities/data-utilities';
-import Chart from 'chart.js/auto';
-import { Button, Table } from 'antd';
-import { Churn, churnColumns } from '../types/data-interfaces';
+import { Bar } from 'react-chartjs-2';
+import { Button, List, Select, Table, Typography } from 'antd';
+import { Chart as ChartJS, ArcElement, Title, Tooltip, LinearScale, PointElement, LineElement, ChartData, BarElement, ChartOptions, CategoryScale} from 'chart.js';
+import { Churn, churnColumns, BasketFrequency } from '../types/data-interfaces';
+import { set } from '@ant-design/plots/es/core/utils';
 
+ChartJS.register(ArcElement, PointElement, BarElement, CategoryScale, Title, Tooltip, LinearScale);
+
+const chartOptions: ChartOptions<"bar"> = {
+    responsive: true,
+    plugins: {
+        title: {
+            display: true,
+            text: 'PREDICTED_CHURN Distribution Bar Graph',
+        },
+        tooltip: {
+            enabled: true,
+        },
+    },
+    scales: {
+        x: {
+            title: {
+                display: true,
+                text: 'PREDICTED_CHURN',
+            },
+        },
+        y: {
+            beginAtZero: true,
+            title: {
+                display: true,
+                text: 'Count',
+            },
+        },
+    },
+};
 
 const PredictiveModelsPage = () => {
-    const [loading, updateLoading] = React.useState<boolean>(false);
-    const [churnData, setChurnData] = React.useState<any[]>([]);
+    const [loading, updateLoading] = useState<boolean>(false);
+    const [churnData, setChurnData] = useState<Churn[]>([]);
+    const [frequencyData, setFrequencyData] = useState<BasketFrequency[]>([]);
+    const [chartData, setChartData] = useState<ChartData<"bar", number[], unknown>>({datasets: []});
+    const [productNumbers, setProductNumbers] = useState<Set<number>>(new Set<number>());
+    const [selectedProductNumber, setSelectedProductNumber] = useState<number | undefined>(undefined);
+    const [selectedProductFrequentItems, setSelectedProductFrequentItems] = useState<Record<number, number>>([]);
+
     const chartRef = useRef<HTMLCanvasElement>(null);
+
 
     const fetchData = async () => {
         updateLoading(true);
@@ -37,67 +75,189 @@ const PredictiveModelsPage = () => {
         } else {
             console.error('Failed to fetch best commodity data');
         }
+
+        let query_frequency: string = `
+            SELECT * FROM 
+                dbo.basket_frequency
+        `;
+
+        const response_frequency = await fetch('/api/runquery', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    query: query_frequency,
+                    params: {},
+                }),
+        });
+    
+        if (response_frequency.ok) {
+            const frequency_data = await response_frequency.json();
+            setFrequencyData(DataUtilities.mapBasketFrequencyData(frequency_data))
+            updateLoading(false);
+        } else {
+            console.error('Failed to fetch best commodity data');
+        }
     }
 
     useEffect(() => {
-        if (chartRef.current && churnData.length > 0) {
-            const counts: Record<number, number> = {};
-            churnData.forEach(({ PREDICTED_CHURN }) => {
-                counts[PREDICTED_CHURN] = (counts[PREDICTED_CHURN] || 0) + 1;
-            });
+        fetchData();
+    }, []);
 
-            const labels = Object.keys(counts).map(key => parseFloat(key).toFixed(2));
-            const data = Object.values(counts);
+    useEffect(() => {
+        const counts: Record<number, number> = {};
+        churnData.forEach(({ PREDICTED_CHURN }) => {
+            counts[PREDICTED_CHURN] = (counts[PREDICTED_CHURN] || 0) + 1;
+        });
 
-            new Chart(chartRef.current, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Count of PREDICTED_CHURN',
-                        data: data,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgb(75, 192, 192)',
-                        borderWidth: 1,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'PREDICTED_CHURN Distribution Bar Graph',
-                        },
-                        tooltip: {
-                            enabled: true,
-                        },
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'PREDICTED_CHURN',
-                            },
-                        },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Count',
-                            },
-                        },
-                    },
-                },
-            });
-        }
+        Object.keys(counts).forEach(key => {
+            if (counts[parseFloat(key)] < 2) {
+                delete counts[parseFloat(key)];
+            }
+        });
+        setChartData({ ...chartData,
+            labels: Object.keys(counts).map(key => parseFloat(key).toFixed(2)),
+            datasets: [{
+                label: 'Count of PREDICTED_CHURN',
+                data: Object.values(counts),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgb(75, 192, 192)',
+                borderWidth: 1,
+            }],
+                
+        })
     }, [churnData]);
-    
 
+    useEffect(() => {
+        let productNumsSet = new Set<number>();
+        if (productNumbers === undefined) {
+            return;
+        }
+        frequencyData.forEach(({ PRODUCT_NUMS }) => {
+            PRODUCT_NUMS?.forEach(pn =>
+                productNumsSet.add(pn)
+            )
+        });
+        setProductNumbers(productNumsSet);
+    }, [frequencyData]);
+
+    useEffect(() => {
+        setSelectedProductFrequentItems({});
+        if (selectedProductNumber === undefined) {
+            return;
+        }
+        frequencyData.forEach(({ PRODUCT_NUMS}) => {
+            if (PRODUCT_NUMS.includes(selectedProductNumber)) {
+                setSelectedProductFrequentItems((prev) => {
+                    let newPrev = {...prev};
+                    PRODUCT_NUMS.forEach(pn => {
+                        if (pn !== selectedProductNumber) {
+                            newPrev[pn] = (newPrev[pn] || 0) + 1;
+                        }
+                    });
+                    return newPrev;
+                });
+            }
+        });
+        console.log(selectedProductFrequentItems);
+    }, [selectedProductNumber]);
+
+
+    const handleChange = (value: any) => {
+        setSelectedProductNumber(value);
+    }
+    
     return (
-        <div>
-            <Table loading={loading} dataSource={churnData.sort((a: Churn, b: Churn) => b.PREDICTED_CHURN - a.PREDICTED_CHURN)} columns={churnColumns} scroll={{x: "80%"}} />
-            {churnData.length > 0 && <canvas ref={chartRef}></canvas>}
-            <Button onClick={fetchData}>Fetch Data</Button>
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '20px',
+                justifyContent: 'space-between',
+                padding: '20px',
+            }}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '20px',
+                    gap: '16px',
+                    borderRadius: '16px',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                }}
+            >
+                <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: "#001529" }}>Basket Analysis</h2>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                    }}
+                >
+                    <Typography>Select a product number to see its frequent items:</Typography>
+                    <Select
+                        defaultValue="Item #"
+                        style={{ width: 120 }}
+                        onChange={handleChange}
+                        options={Array.from(productNumbers).map(pn => ({ value: pn, label: pn }))}
+                    />
+                </div>
+                <List
+                    bordered
+                    dataSource={Object.entries(selectedProductFrequentItems).map(([key, value]) => ({ key, value }))}
+                    renderItem={({key, value}) => (
+                        <List.Item>
+                            The selected item has been bought with Item <strong style={{color: '#001529'}}>{key}</strong> <strong>{value}</strong> times in the last month.
+                        </List.Item>
+                    )}
+                />
+            </div>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '20px',
+                    gap: '16px',
+                    borderRadius: '16px',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                }}
+            >
+            
+                <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: '#001529' }}>Churn Prediction</h2>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '20px',
+                    }}
+                >
+                    <div
+                        style={{
+                            height: '500px',
+                            width: '100%',
+                            overflow: 'auto',
+                            scrollbarWidth: 'none',
+                            boxSizing: 'border-box'
+                        }}
+                    >
+                        <Table loading={loading} dataSource={churnData.sort((a: Churn, b: Churn) => b.PREDICTED_CHURN - a.PREDICTED_CHURN)} columns={churnColumns} scroll={{x: "80%"}} />
+                    </div>
+                    <div
+                        style={{
+                            height: '500px',
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Bar data={chartData} options={chartOptions} />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

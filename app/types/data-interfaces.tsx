@@ -67,6 +67,13 @@ export interface Churn {
   PREDICTED_CHURN: number,
 }
 
+export interface BasketFrequency {
+  key: number,
+  PRODUCT_NUMS: number[],
+  COMBO_FREQUENCY: number,
+  COMBO_SIZE: number,
+}
+
 export interface Household {
     key: number,
     HSHD_NUM: string,
