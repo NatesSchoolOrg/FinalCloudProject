@@ -45,6 +45,10 @@ const NavigationMenu = () => {
               label: "Log Out",
             },
           ],
+        },
+        {
+            key: 'documnetation',
+            label: 'Project Documentation'
         }
     ] : [
         {
@@ -54,19 +58,26 @@ const NavigationMenu = () => {
         {
             key: "login",
             label: "Log In",
-          },
+        },
+        {
+            key: 'documnetation',
+            label: 'Project Documentation'
+        },
     ];
 
     const handleNavigation = async (route: string) => {
-    setPageLoading(true);
-    await router.push(route);
-    setPageLoading(false);
+        setPageLoading(true);
+        await router.push(route);
+        setPageLoading(false);
     };
 
     const onClick: MenuProps['onClick'] = (e) => {
     if (e.key === "logout") {
         logout();
         router.push("/"); // Redirect to home on logout
+    }
+    else if (e.key === "documnetation") {
+        window.open("https://github.com/madicoulson/finalCloudProject/blob/main/README.md");
     } else {
         handleNavigation(`/${e.key}`);
     }
