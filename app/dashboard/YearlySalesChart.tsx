@@ -10,8 +10,6 @@ ChartJS.register(ArcElement, PointElement, LineElement, Title, Tooltip, LinearSc
 
 interface Props {
     commodity: Commodity | undefined;
-    holidayWeek: number; 
-    holidayYear: number; 
 }
 
 
@@ -47,9 +45,7 @@ const YearlySalesChart = (props: Props) => {
             }]
         });
     }, [weeklySales]);
-    const highLightBackground = {
-        
-    }
+
     const fetchYearlySales = async () => {
         let query: string = `
             SELECT t.WEEK_NUM, t.[YEAR], COUNT(*) as COUNT
