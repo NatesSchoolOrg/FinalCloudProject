@@ -1,8 +1,7 @@
 "use client"
-import type { Metadata } from "next";
-import React, { useState, useEffect, use } from "react";
+import React, { useState } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { Layout, Menu, MenuProps, Spin, theme } from "antd";
+import { Layout, Menu, MenuProps } from "antd";
 import "./globals.css";
 import { useAuth } from "../context/AuthContext";
 import { UserOutlined } from "@ant-design/icons";

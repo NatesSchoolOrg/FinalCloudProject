@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "npm install typescript --save-dev"
+  },
+  "engines": {
+    "node": "18.x"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
