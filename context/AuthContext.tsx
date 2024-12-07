@@ -15,10 +15,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const isSecure = process.env.NODE_ENV === "production";
+
   const login = (username: string) => {
     setIsLoggedIn(true);
-    Cookies.set("loggedIn", "true", { expires: 7 });
-    Cookies.set("username", username, { expires: 7 });
+    Cookies.set("loggedIn", "true", { expires: 7, secure: isSecure, sameSite: "Lax" });
+    Cookies.set("username", username, { expires: 7, secure: isSecure, sameSite: "Lax" });
   };
   
   const logout = () => {
@@ -31,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const changeUser = (username: string) => {
-    Cookies.set("username", username, { expires: 7 });
+    Cookies.set("username", username, { expires: 7, secure: isSecure, sameSite: "Lax" });
   }
 
   return (
