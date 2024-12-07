@@ -4,7 +4,7 @@ import React, { useState, useEffect, use } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 import { Layout, Menu, MenuProps, Spin, theme } from "antd";
 import "./globals.css";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { UserOutlined } from "@ant-design/icons";
 
 const { Header, Content, Footer } = Layout;

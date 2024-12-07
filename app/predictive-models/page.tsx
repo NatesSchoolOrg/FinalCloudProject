@@ -1,13 +1,12 @@
 "use client"
 import Image from "next/image";
-import React, { MouseEventHandler, useState, useRef, useEffect} from 'react';
+import React, { useState, useEffect} from 'react';
 import { DataUtilities } from '../utilities/data-utilities';
 import { Bar } from 'react-chartjs-2';
-import { Button, List, Select, Table, Typography } from 'antd';
-import { Chart as ChartJS, ArcElement, Title, Tooltip, LinearScale, PointElement, LineElement, ChartData, BarElement, ChartOptions, CategoryScale} from 'chart.js';
+import { List, Select, Table, Typography } from 'antd';
+import { Chart as ChartJS, ArcElement, Title, Tooltip, LinearScale, PointElement, ChartData, BarElement, ChartOptions, CategoryScale} from 'chart.js';
 import { Churn, churnColumns, BasketFrequency } from '../types/data-interfaces';
-import githubpng from '$public/github.png';
-import { useProtectedRoute } from "@/hooks/useProtectedRoute";
+import { useProtectedRoute } from "../../hooks/useProtectedRoute";
 
 ChartJS.register(ArcElement, PointElement, BarElement, CategoryScale, Title, Tooltip, LinearScale);
 

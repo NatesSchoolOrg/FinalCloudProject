@@ -1,12 +1,7 @@
 "use client";
-import Image from "next/image";
-import styles from "./page.module.css";
-import { connectToDatabase } from "@/database-config";
-import { Button, Card, message } from "antd";
-import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { Card } from "antd";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import DashBoardPhoto from "@/public/DashboardPhoto.jpg";
 const cardStyle: React.CSSProperties = {
     width: "600px",
     height: "500px",

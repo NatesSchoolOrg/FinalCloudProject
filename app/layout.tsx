@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Layout, Menu, MenuProps, Spin, theme } from "antd";
 import localFont from "next/font/local";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
-import { useAuth } from "@/context/AuthContext";
+import { AuthProvider } from "../context/AuthContext";
 import NavigationMenu from "./NavigationMenu";
 
 const { Content, Footer } = Layout;
