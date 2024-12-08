@@ -31,7 +31,7 @@ const YearlySalesChart = (props: Props) => {
                 }
             }).map((weeklySale) => `${weeklySale.week}/${weeklySale.year}`),
             datasets: [{
-                label: 'My First Dataset',
+                label: 'Sales Numbers By Week of The Year',
                 data: weeklySales.sort((a, b) => {
                     if (a.year !== b.year) {
                         return a.year - b.year;
