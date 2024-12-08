@@ -103,13 +103,11 @@ const CommodityDisplay = (props: Props) => {
                                     props.bestCommodities.map((commodity, index) => {
                                         return (
                                             <div key={index}>
-                                                <p>
                                                     <CommodityButton
                                                         commodity={commodity}
                                                         onClick={() => handleClick(commodity)}
                                                         active={selectedCommodity?.name === commodity.name}
                                                     />
-                                                </p>
                                             </div>
                                         );
                                     })
@@ -126,13 +124,11 @@ const CommodityDisplay = (props: Props) => {
                                 props.worstCommodities.sort((a, b) => b.amount - a.amount).map((commodity, index) => {
                                     return (
                                         <div key={index}>
-                                            <p>
                                                 <CommodityButton
                                                     commodity={commodity}
                                                     onClick={() => handleClick(commodity)}
                                                     active={selectedCommodity?.name === commodity.name}
                                                 />
-                                            </p>
                                         </div>
                                     );
                                 })

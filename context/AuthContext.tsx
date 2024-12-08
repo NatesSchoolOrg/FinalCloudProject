@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
 
 interface AuthContextType {
@@ -13,9 +13,14 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(Cookies.get("loggedIn") === "true");
 
   const isSecure = process.env.NODE_ENV === "production";
+
+  useEffect(() => {
+    const loggedIn = Cookies.get("loggedIn") === "true";
+    setIsLoggedIn(loggedIn);
+  }, []);
 
   const login = (username: string) => {
     setIsLoggedIn(true);
